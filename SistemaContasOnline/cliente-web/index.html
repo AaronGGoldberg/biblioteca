@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Gerenciamento de Contas Online</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-glow glow-1"></div>
+  <div class="background-glow glow-2"></div>
+
+  <main class="page-container">
+    <header class="hero">
+      <div class="hero-badge">API Gateway • HATEOAS • Swagger • Microsserviços</div>
+      <h1>Sistema de Gerenciamento de Contas Online</h1>
+      <p class="hero-text">
+        Cliente web do sistema distribuído, conectado ao API Gateway para demonstrar cadastro de contas,
+        movimentações financeiras, histórico de transações, consulta de saldo e navegação HATEOAS.
+      </p>
+
+      <div class="hero-actions">
+        <a href="/api-docs" target="_blank" class="link-button secondary">Abrir Swagger</a>
+        <a href="/gateway/contas" target="_blank" class="link-button primary">Testar API</a>
+      </div>
+    </header>
+
+    <section class="metrics-grid">
+      <article class="metric-card">
+        <span class="metric-label">Contas cadastradas</span>
+        <strong id="metricTotalContas">0</strong>
+      </article>
+
+      <article class="metric-card">
+        <span class="metric-label">Transações exibidas</span>
+        <strong id="metricTotalTransacoes">0</strong>
+      </article>
+
+      <article class="metric-card">
+        <span class="metric-label">Último saldo consultado</span>
+        <strong id="metricSaldo">R$ 0,00</strong>
+      </article>
+    </section>
+
+    <section class="dashboard-grid">
+      <article class="card">
+        <div class="card-header">
+          <h2>Criar Conta</h2>
+          <p>Cadastre uma nova conta com nome e email.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="nome">Nome</label>
+          <input type="text" id="nome" placeholder="Digite o nome completo">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="Digite o email">
+        </div>
+
+        <button class="action-button success" onclick="criarConta()">Criar Conta</button>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <h2>Listar Contas</h2>
+          <p>Exibe todas as contas cadastradas no sistema.</p>
+        </div>
+
+        <div class="card-content center-content">
+          <button class="action-button info" onclick="listarContas()">Listar Contas</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <h2>Consultar Conta</h2>
+          <p>Busca uma conta específica e exibe seus links HATEOAS.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="consultaContaId">ID da Conta</label>
+          <input type="number" id="consultaContaId" placeholder="Ex.: 1">
+        </div>
+
+        <button class="action-button warning" onclick="consultarConta()">Consultar Conta</button>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <h2>Depositar</h2>
+          <p>Adicione saldo à conta informada.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="depositoContaId">ID da Conta</label>
+          <input type="number" id="depositoContaId" placeholder="Ex.: 1">
+        </div>
+
+        <div class="form-group">
+          <label for="depositoValor">Valor</label>
+          <input type="number" id="depositoValor" placeholder="Ex.: 500">
+        </div>
+
+        <button class="action-button primary" onclick="depositar()">Depositar</button>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <h2>Sacar</h2>
+          <p>Retire um valor do saldo da conta.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="saqueContaId">ID da Conta</label>
+          <input type="number" id="saqueContaId" placeholder="Ex.: 1">
+        </div>
+
+        <div class="form-group">
+          <label for="saqueValor">Valor</label>
+          <input type="number" id="saqueValor" placeholder="Ex.: 100">
+        </div>
+
+        <button class="action-button danger" onclick="sacar()">Sacar</button>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <h2>Consultar Saldo</h2>
+          <p>Veja o saldo atual de uma conta específica.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="saldoContaId">ID da Conta</label>
+          <input type="number" id="saldoContaId" placeholder="Ex.: 1">
+        </div>
+
+        <button class="action-button saldo" onclick="consultarSaldo()">Consultar Saldo</button>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <h2>Histórico de Transações</h2>
+          <p>Visualize o histórico completo de depósitos e saques.</p>
+        </div>
+
+        <div class="form-group">
+          <label for="historicoContaId">ID da Conta</label>
+          <input type="number" id="historicoContaId" placeholder="Ex.: 1">
+        </div>
+
+        <button class="action-button history" onclick="listarTransacoes()">Ver Histórico</button>
+      </article>
+
+      <article class="card quick-card">
+        <div class="card-header">
+          <h2>Ações Rápidas</h2>
+          <p>Ferramentas para agilizar sua demonstração.</p>
+        </div>
+
+        <div class="quick-actions">
+          <button class="action-button neutral" onclick="preencherExemplo()">Preencher Exemplo</button>
+          <button class="action-button neutral" onclick="limparResultado()">Limpar Resultado</button>
+          <button class="action-button neutral" onclick="limparTabelas()">Limpar Tabelas</button>
+        </div>
+      </article>
+    </section>
+
+    <section class="tables-grid">
+      <article class="table-card">
+        <div class="table-card-header">
+          <h2>Contas Cadastradas</h2>
+          <p>Visualização organizada das contas retornadas pelo Gateway.</p>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaContas">
+              <tr class="empty-row">
+                <td colspan="3">Nenhuma conta exibida ainda.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="table-card">
+        <div class="table-card-header">
+          <h2>Histórico de Transações</h2>
+          <p>Depósitos e saques realizados pela conta consultada.</p>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Conta</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaTransacoes">
+              <tr class="empty-row">
+                <td colspan="4">Nenhuma transação exibida ainda.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section class="result-card">
+      <div class="result-header">
+        <div>
+          <h2>Resultado da Operação</h2>
+          <p>Resposta bruta da API formatada em JSON.</p>
+        </div>
+        <span id="statusBadge" class="status-badge">Aguardando ação</span>
+      </div>
+
+      <pre id="resultado">{
+  "mensagem": "O sistema está pronto para uso."
+}</pre>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
